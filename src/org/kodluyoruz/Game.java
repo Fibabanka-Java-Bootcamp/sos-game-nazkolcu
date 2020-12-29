@@ -1,98 +1,120 @@
 package org.kodluyoruz;
 
 
+import static java.lang.System.out;
+
 public class Game {
 
-    private int matrixReal[][];
-
-    public int getMatrixLine() {
-        return matrixLine;
-    }
-
-    public void setMatrixRealIndex(int matrixLine, int matrixColumn, int PlayerLetter) {
-        if (this.matrixReal[matrixLine][matrixColumn] == 0)
-            this.matrixReal[matrixLine][matrixColumn] = PlayerLetter;
-    }
-
-    public int getMatrixColumn() {
-        return matrixColumn;
-    }
-
+    private String matrixReal[][];
     private int matrixN;
-    private int matrixLine;
-    private int matrixColumn;
+
+    private int letterI;
+    private int letterJ;
 
     private int playerMePoint;
     private int PlayerPcPoint;
 
     private int PlayerTurn;
-    private int PlayerLetter;
+    private String letter;
 
-    public int getPlayerMePoint() {
-        return playerMePoint;
+    public void setMatrixReal(String[][] matrixReal) {
+        this.matrixReal = matrixReal;
     }
+
+    public String[][] getMatrixReal() {
+        return matrixReal;
+    }
+
+
+    public int setMatrixN(int matrixN) {
+        if (matrixN >= 3 && matrixN <= 7) {
+            this.matrixN = matrixN;
+            this.matrixReal = new String[matrixN + 1][matrixN + 1];
+
+            for (int i = 0; i < this.matrixN + 1; i++) {
+                for (int j = 0; j < this.matrixN + 1; j++) {
+                    this.matrixReal[i][j] = ".";
+                }
+
+            }
+
+            return 1;
+        } else {
+            System.out.println("İstenilen aralıkta giriniz!");
+            return 0;
+        }
+
+    }
+
+    public int getMatrixN() {
+        return this.matrixN;
+    }
+
+
+    public void setMatrixRealIndex(int letterI, int letterJ, String letter) {
+        if (this.matrixReal[letterI][letterJ].equals("."))
+            this.matrixReal[letterI][letterJ] = letter;
+    }
+
+    public String getMatrixRealAtIndex(int letterI, int letterJ) {
+        return matrixReal[letterI][letterJ];
+    }
+
+
+    public void setLetterI(int letterI) {
+        this.letterI = letterI;
+    }
+
+    public int getLetterI() {
+        return letterI;
+    }
+
+
+    public void setLetterJ(int letterJ) {
+        this.letterJ = letterJ;
+    }
+
+    public int getLetterJ() {
+        return letterJ;
+    }
+
 
     public void setPlayerMePoint(int playerMePoint) {
         this.playerMePoint = playerMePoint;
     }
 
-    public int getPlayerPcPoint() {
-        return PlayerPcPoint;
+    public int getPlayerMePoint() {
+        return playerMePoint;
     }
 
     public void setPlayerPcPoint(int playerPcPoint) {
         PlayerPcPoint = playerPcPoint;
     }
 
-
-    public void setPlayerLetter(int PlayerLetter) {
-        this.PlayerLetter = PlayerLetter;
+    public int getPlayerPcPoint() {
+        return PlayerPcPoint;
     }
 
-    public void setPlayerTurn(int PlayerMove) {
-        this.PlayerTurn = PlayerMove;
+
+    public void setPlayerTurn(int PlayerTurn) {
+        this.PlayerTurn = PlayerTurn;
     }
 
     public int getPlayerTurn() {
         return PlayerTurn;
     }
 
-    public int getPlayerLetter() {
-        return PlayerLetter;
+
+    public void setLetter(int letter) {
+        if (letter == 6)
+            this.letter = "O";
+        else
+            this.letter = "S";
+    }
+
+    public String getLetter() {
+        return letter;
     }
 
 
-    public int getMatrixRealAtIndex(int matrixLine, int matrixColumn) {
-        return matrixReal[matrixLine][matrixColumn];
-    }
-
-    public int[][] getMatrixReal() {
-        return matrixReal;
-    }
-
-    public int getMatrixN() {
-        return matrixN;
-    }
-
-    public int setMatrixN(int matrixN) {
-        if (matrixN >= 3 && matrixN <= 7) {
-            this.matrixN = matrixN;
-            this.matrixReal = new int[matrixN + 1][matrixN + 1];
-
-
-            return 1;
-        } else {
-            System.out.println("Out of range! Pls try again");
-            return 0;
-        }
-
-    }
-
-    public void setMatrixLine(int matrixLine) {
-        this.matrixLine = matrixLine;
-    }
-
-    public void setMatrixColumn(int matrixColumn) {
-        this.matrixColumn = matrixColumn;
-    }
 }

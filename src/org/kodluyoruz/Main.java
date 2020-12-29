@@ -3,6 +3,8 @@ package org.kodluyoruz;
 import java.util.Scanner;
 import java.util.Random;
 
+import static java.lang.System.out;
+
 public class Main {
 
     public static void main(String[] args) {
@@ -11,160 +13,520 @@ public class Main {
 
         configGame(SOS);
 
-
         guessFirstMove(SOS);
-        System.out.println("-" + SOS.getPlayerTurn() + "-" + SOS.getPlayerLetter() + "-" + SOS.getMatrixN());
-        // SOS.getPlayerTurn()
-        // SOS.getPlayerLetter()
-
 
         wholeGame(SOS);
-        //tüm alanlar dolana kadar devam et!
-
-
-        //makeMove;
-
-
-        System.out.println("-------");
-
-        //indis üzerinden çağırma
-        for (int i = 0; i < SOS.getMatrixN(); i++) {
-            for (int j = 0; j < SOS.getMatrixN(); j++) {
-                System.out.print(SOS.getMatrixReal()[i][j] + "\t");
-            }
-            System.out.println();
-        }
-        System.out.println("-------");
-
-        //indis üzerinden çağırma
-        for (int i = 0; i < SOS.getMatrixReal().length; i++) {
-            for (int j = 0; j < SOS.getMatrixReal().length; j++) {
-                System.out.print(SOS.getMatrixReal()[i][j] + "\t");
-            }
-            System.out.println();
-        }
 
     }
 
     public static void configGame(Game SOS) {
-        System.out.println("SOS Oyununa Hoş Geldiniz!");
+
+        out.println("SOS Oyununa Hoş Geldiniz!");
+
         int matrixNcontrol;
 
         do {
             Scanner scanner = new Scanner(System.in);
-            System.out.println("Matris büyüklüğü olarak bir N sayısı giriniz (NxN/3-7):");
+            out.println("Matris büyüklüğü olarak bir N sayısı giriniz (NxN/3-7):");
+
             int matrixN = scanner.nextInt();
+
             matrixNcontrol = SOS.setMatrixN(matrixN);
 
         } while (matrixNcontrol == 0);
     }
 
-    // turn:2pc,1me
-    //letter:5S,6O
+
     public static void guessFirstMove(Game SOS) {
-        int PlayerTurn, PlayerLetter;
+        int PlayerTurn;
+        int playerLetter;
+
         Random random = new Random();
-        PlayerTurn = 1;
-        //random.nextInt(2) + 1;
-        PlayerLetter = 5 + random.nextInt(6 - 5 + 1);
+
+        // turn:1-me, 2-pc
+        PlayerTurn = random.nextInt(2) + 1;
+
+        //letter:5-S, 6-O
+        playerLetter = 5 + random.nextInt(6 - 5 + 1);
+
 
         SOS.setPlayerTurn(PlayerTurn);
-        SOS.setPlayerLetter(PlayerLetter);
+        SOS.setLetter(playerLetter);
     }
 
 
     public static void printMatrix(Game SOS) {
+
         for (int i = 0; i < SOS.getMatrixReal().length; i++) {
 
             for (int j = 0; j < SOS.getMatrixReal().length; j++) {
                 if (i == 0 && j == 0) {
-                    System.out.print("\t");
+                    out.print("\t");
                 } else if (i == 0) {
-                    System.out.print(j + "\t");
+                    out.print(j + "\t");
                 } else if (j == 0) {
-                    System.out.print(i + "\t");
+                    out.print(i + "\t");
                 } else {
-                    System.out.print(SOS.getMatrixRealAtIndex(i, j) + "\t");
+                    if (SOS.getMatrixRealAtIndex(i, j).equals(".")) out.print("_" + "\t");
+                    else
+                        out.print(SOS.getMatrixRealAtIndex(i, j) + "\t");
                 }
             }
-            System.out.println();
+            out.println();
         }
     }
+
+    public static void letterControl(Game SOS) {
+
+        String[][] matrix = SOS.getMatrixReal();
+        String PlayerLetter = SOS.getLetter();
+
+        int matrixN = SOS.getMatrixN();
+        int LetterI = SOS.getLetterI();
+        int LetterJ = SOS.getLetterJ();
+
+        if (PlayerLetter.equals("O")) {
+            if ((LetterI == 1 & LetterJ == 1) || (LetterI == matrixN & LetterJ == 1) || (LetterI == 1 & LetterJ == matrixN) || (LetterI == matrixN & LetterJ == matrixN)) {
+
+            } else if ((LetterJ == 1 || LetterJ == matrixN) && (LetterI == 1 || LetterI == matrixN)) {
+                if (LetterI == 1 || LetterI == matrixN) {
+                    if (matrix[1][LetterJ - 1].equals("O") && matrix[1][LetterJ + 1].equals("S")) {
+                        addPoint(SOS);
+                    } else if (matrix[matrixN][LetterJ - 1].equals("S") && matrix[matrixN][LetterJ + 1].equals("S")) {
+                        addPoint(SOS);
+                    }
+                }
+                if (LetterJ == 1 || LetterJ == matrixN) {
+                    if (matrix[LetterI - 1][1].equals("S") && matrix[LetterI + 1][1].equals("S")) {
+                        addPoint(SOS);
+                    }
+                    if (matrix[LetterI - 1][matrixN].equals("S") && matrix[LetterI + 1][matrixN].equals("S")) {
+                        addPoint(SOS);
+                    }
+
+                }
+
+
+            } else {
+                if (LetterI + 1 <= matrixN && LetterI - 1 <= matrixN && LetterJ + 1 <= matrixN && LetterJ - 1 <= matrixN) {
+                    if (matrix[LetterI - 1][LetterJ - 1].equals("S") && matrix[LetterI + 1][LetterJ + 1].equals("S")) {
+                        addPoint(SOS);
+                    }
+                }
+                if (LetterI - 1 <= matrixN && LetterJ + 1 <= matrixN && LetterJ - 1 <= matrixN && LetterI + 1 <= matrixN) {
+
+                    if (matrix[LetterI + 1][LetterJ - 1].equals("S") && matrix[LetterI - 1][LetterJ + 1].equals("S")) {
+                        addPoint(SOS);
+                    }
+                }
+                if (LetterI + 1 <= matrixN && LetterI - 1 <= matrixN) {
+                    if (matrix[LetterI - 1][LetterJ].equals("S") && matrix[LetterI + 1][LetterJ].equals("S")) {
+                        addPoint(SOS);
+                    }
+                }
+                if (LetterJ + 1 <= matrixN && LetterJ - 1 <= matrixN) {
+                    if (matrix[LetterI][LetterJ - 1].equals("S") && matrix[LetterI][LetterJ + 1].equals("S")) {
+                        addPoint(SOS);
+                    }
+                }
+            }
+
+        } else {
+
+            //sKose basladı
+            if (LetterI == 1 && LetterJ == 1) {
+                if ((matrix[LetterI][LetterJ + 1].equals("O")) && matrix[LetterI][LetterJ + 2].equals("S")) {
+                    addPoint(SOS);
+                }
+                if ((matrix[LetterI + 1][LetterJ + 1].equals("O")) && matrix[LetterI + 2][LetterJ + 2].equals("S")) {
+                    addPoint(SOS);
+                }
+                if ((matrix[LetterI + 1][LetterJ].equals("O")) && matrix[LetterI + 2][LetterJ].equals("S")) {
+                    addPoint(SOS);
+                }
+            } else if (LetterI == matrixN && LetterJ == 1) {
+
+                if ((matrix[LetterI - 1][LetterJ].equals("O")) && matrix[LetterI - 2][LetterJ].equals("S")) {
+                    addPoint(SOS);
+                }
+                if ((matrix[LetterI - 1][LetterJ + 1].equals("O")) && matrix[LetterI - 2][LetterJ + 2].equals("S")) {
+                    addPoint(SOS);
+                }
+                if ((matrix[LetterI][LetterJ + 1].equals("O")) && matrix[LetterI][LetterJ + 2].equals("S")) {
+                    addPoint(SOS);
+                }
+            } else if (LetterI == 1 && LetterJ == matrixN) {
+                if ((matrix[LetterI][LetterJ - 1].equals("O")) && matrix[LetterI][LetterJ - 2].equals("S")) {
+                    addPoint(SOS);
+                }
+                if ((matrix[LetterI + 1][LetterJ - 1].equals("O")) && matrix[LetterI + 2][LetterJ - 2].equals("S")) {
+                    addPoint(SOS);
+                }
+                if ((matrix[LetterI + 1][LetterJ].equals("O")) && matrix[LetterI + 2][LetterJ].equals("S")) {
+                    addPoint(SOS);
+                }
+            } else if (LetterI == matrixN && LetterJ == matrixN) {
+                if ((matrix[LetterI][LetterJ - 1].equals("O")) && matrix[LetterI][LetterJ - 2].equals("S")) {
+                    addPoint(SOS);
+                }
+                if ((matrix[LetterI - 1][LetterJ - 1].equals("O")) && matrix[LetterI - 2][LetterJ - 2].equals("S")) {
+                    addPoint(SOS);
+                }
+                if ((matrix[LetterI - 1][LetterJ].equals("O")) && matrix[LetterI - 2][LetterJ].equals("S")) {
+                    addPoint(SOS);
+                }
+            }
+            //sKose bitti
+//sKenar
+
+            //
+            else if (LetterJ == 1 && LetterI == 2) {
+                if (LetterJ + 2 <= matrixN) {
+                    if ((matrix[LetterI][LetterJ + 1].equals("O")) && matrix[LetterI][LetterJ + 2].equals("S")) {
+                        addPoint(SOS);
+                    }
+                }
+                if (LetterI + 2 <= matrixN && LetterJ + 2 <= matrixN) {
+                    if ((matrix[LetterI + 1][LetterJ + 1].equals("O")) && matrix[LetterI + 2][LetterJ + 2].equals("S")) {
+                        addPoint(SOS);
+                    }
+                }
+                if (LetterI + 2 <= matrixN) {
+                    if ((matrix[LetterI + 1][LetterJ].equals("O")) && matrix[LetterI + 2][LetterJ].equals("S")) {
+                        addPoint(SOS);
+                    }
+                }
+            }
+            //
+            else if (LetterJ == 1 && LetterI == matrixN - 1) {
+                if (LetterI - 2 <= matrixN) {
+                    if ((matrix[LetterI - 1][LetterJ].equals("O")) && matrix[LetterI - 2][LetterJ].equals("S")) {
+                        addPoint(SOS);
+                    }
+                }
+                if (LetterI - 2 <= matrixN && LetterJ + 2 <= matrixN) {
+                    if ((matrix[LetterI - 1][LetterJ + 1].equals("O")) && matrix[LetterI - 2][LetterJ + 2].equals("S")) {
+                        addPoint(SOS);
+                    }
+                }
+                if (LetterJ + 2 <= matrixN) {
+                    if ((matrix[LetterI][LetterJ + 1].equals("O")) && matrix[LetterI][LetterJ + 2].equals("S")) {
+                        addPoint(SOS);
+                    }
+                }
+            }
+            //
+            else if (LetterJ == 1 && 2 < LetterI && LetterI < matrixN - 1) {
+                if (LetterI - 2 <= matrixN) {
+                    if ((matrix[LetterI - 1][LetterJ].equals("O")) && matrix[LetterI - 2][LetterJ].equals("S")) {
+                        addPoint(SOS);
+                    }
+                }
+                if (LetterJ + 2 <= matrixN) {
+                    if ((matrix[LetterI][LetterJ + 1].equals("O")) && matrix[LetterI][LetterJ + 2].equals("S")) {
+                        addPoint(SOS);
+                    }
+                }
+                if (LetterI + 2 <= matrixN) {
+                    if ((matrix[LetterI + 1][LetterJ].equals("O")) && matrix[LetterI + 2][LetterJ].equals("S")) {
+                        addPoint(SOS);
+                    }
+                }
+            } else if (LetterJ == matrixN && LetterI == 2) {
+                if (LetterJ - 2 <= matrixN) {
+                    if ((matrix[LetterI][LetterJ - 1].equals("O")) && matrix[LetterI][LetterJ - 2].equals("S")) {
+                        addPoint(SOS);
+                    }
+                }
+                if (LetterI - 2 <= matrixN && LetterJ - 2 <= matrixN) {
+                    if ((matrix[LetterI - 1][LetterJ - 1].equals("O")) && matrix[LetterI - 2][LetterJ - 2].equals("S")) {
+                        addPoint(SOS);
+                    }
+                }
+                if (LetterI - 2 <= matrixN) {
+                    if ((matrix[LetterI - 1][LetterJ].equals("O")) && matrix[LetterI - 2][LetterJ].equals("S")) {
+                        addPoint(SOS);
+                    }
+                }
+            } else if (LetterJ == matrixN && LetterI == matrixN - 1) {
+                if (LetterI - 2 <= matrixN) {
+                    if ((matrix[LetterI - 1][LetterJ].equals("O")) && matrix[LetterI - 2][LetterJ].equals("S")) {
+                        addPoint(SOS);
+                    }
+                }
+                if (LetterI - 2 <= matrixN && LetterJ - 2 <= matrixN) {
+                    if ((matrix[LetterI - 1][LetterJ - 1].equals("O")) && matrix[LetterI - 2][LetterJ - 2].equals("S")) {
+                        addPoint(SOS);
+                    }
+                }
+                if (LetterJ - 2 <= matrixN) {
+                    if ((matrix[LetterI][LetterJ - 1].equals("O")) && matrix[LetterI][LetterJ - 2].equals("S")) {
+                        addPoint(SOS);
+                    }
+                }
+            } else if (LetterJ == matrixN && 2 < LetterI && LetterI < matrixN - 1) {
+                if (LetterI - 2 <= matrixN) {
+                    if ((matrix[LetterI - 1][LetterJ].equals("O")) && matrix[LetterI - 2][LetterJ].equals("S")) {
+                        addPoint(SOS);
+                    }
+                }
+                if (LetterJ - 2 <= matrixN) {
+                    if ((matrix[LetterI][LetterJ - 1].equals("O")) && matrix[LetterI][LetterJ - 2].equals("S")) {
+                        addPoint(SOS);
+                    }
+                }
+                if (LetterI + 2 <= matrixN) {
+                    if ((matrix[LetterI + 1][LetterJ].equals("O")) && matrix[LetterI + 2][LetterJ].equals("S")) {
+                        addPoint(SOS);
+                    }
+                }
+            } else if (LetterI == matrixN && LetterJ == 2) {
+                if (LetterI - 2 <= matrixN) {
+                    if ((matrix[LetterI - 1][LetterJ].equals("O")) && matrix[LetterI - 2][LetterJ].equals("S")) {
+                        addPoint(SOS);
+                    }
+                }
+                if (LetterJ + 2 <= matrixN && LetterI - 2 <= matrixN) {
+                    if ((matrix[LetterI - 1][LetterJ + 1].equals("O")) && matrix[LetterI - 2][LetterJ + 2].equals("S")) {
+                        addPoint(SOS);
+                    }
+                }
+                if (LetterJ + 2 <= matrixN) {
+                    if ((matrix[LetterI][LetterJ + 1].equals("O")) && matrix[LetterI][LetterJ + 2].equals("S")) {
+                        addPoint(SOS);
+                    }
+                }
+            } else if (LetterI == matrixN && LetterJ == matrixN - 1) {
+                if (LetterI - 2 <= matrixN) {
+                    if ((matrix[LetterI - 1][LetterJ].equals("O")) && matrix[LetterI - 2][LetterJ].equals("S")) {
+                        addPoint(SOS);
+                    }
+                }
+                if (LetterI - 2 <= matrixN && LetterJ - 2 <= matrixN) {
+                    if ((matrix[LetterI - 1][LetterJ - 1].equals("O")) && matrix[LetterI - 2][LetterJ - 2].equals("S")) {
+                        addPoint(SOS);
+                    }
+                }
+                if (LetterJ - 2 <= matrixN) {
+                    if ((matrix[LetterI][LetterJ - 1].equals("O")) && matrix[LetterI][LetterJ - 2].equals("S")) {
+                        addPoint(SOS);
+                    }
+                }
+            } else if (LetterI == matrixN && 2 < LetterJ && LetterJ < matrixN - 1) {
+                if (LetterJ - 2 <= matrixN) {
+                    if ((matrix[LetterI][LetterJ - 1].equals("O")) && matrix[LetterI][LetterJ - 2].equals("S")) {
+                        addPoint(SOS);
+                    }
+                }
+                if (LetterI - 2 <= matrixN) {
+                    if ((matrix[LetterI - 1][LetterJ].equals("O")) && matrix[LetterI - 2][LetterJ].equals("S")) {
+                        addPoint(SOS);
+                    }
+                }
+                if (LetterJ + 2 <= matrixN) {
+                    if ((matrix[LetterI][LetterJ + 1].equals("O")) && matrix[LetterI][LetterJ + 2].equals("S")) {
+                        addPoint(SOS);
+                    }
+                }
+            } else if (LetterI == 1 && LetterJ == 2) {
+                if (LetterJ + 2 <= matrixN) {
+                    if ((matrix[LetterI][LetterJ + 1].equals("O")) && matrix[LetterI][LetterJ + 2].equals("S")) {
+                        addPoint(SOS);
+                    }
+                }
+                if (LetterI + 2 <= matrixN && LetterJ + 2 <= matrixN) {
+                    if ((matrix[LetterI + 1][LetterJ + 1].equals("O")) && matrix[LetterI + 2][LetterJ + 2].equals("S")) {
+                        addPoint(SOS);
+                    }
+                }
+                if (LetterI + 2 <= matrixN) {
+                    if ((matrix[LetterI + 1][LetterJ].equals("O")) && matrix[LetterI + 2][LetterJ].equals("S")) {
+                        addPoint(SOS);
+                    }
+                }
+            }
+            //DOLDUR
+            else if (LetterI == 1 && LetterJ == matrixN - 1) {
+                if (LetterJ - 2 <= matrixN) {
+                    if ((matrix[LetterI][LetterJ - 1].equals("O")) && matrix[LetterI][LetterJ - 2].equals("S")) {
+                        addPoint(SOS);
+                    }
+                }
+                if (LetterI + 2 <= matrixN) {
+                    if ((matrix[LetterI + 1][LetterJ].equals("O")) && matrix[LetterI + 2][LetterJ].equals("S")) {
+                        addPoint(SOS);
+                    }
+                }
+                if (LetterJ + 2 <= matrixN) {
+                    if ((matrix[LetterI][LetterJ + 1].equals("O")) && matrix[LetterI][LetterJ + 2].equals("S")) {
+                        addPoint(SOS);
+                    }
+                }
+            } else if (LetterI == 1 && 2 < LetterJ && LetterJ < matrixN - 1) {
+                if (LetterJ - 2 <= matrixN) {
+                    if ((matrix[LetterI][LetterJ - 1].equals("O")) && matrix[LetterI][LetterJ - 2].equals("S")) {
+                        addPoint(SOS);
+                    }
+                }
+                if (LetterI + 2 <= matrixN && LetterJ - 2 <= matrixN) {
+                    if ((matrix[LetterI + 1][LetterJ - 1].equals("O")) && matrix[LetterI + 2][LetterJ - 2].equals("S")) {
+                        addPoint(SOS);
+                    }
+                }
+                if (LetterI + 2 <= matrixN) {
+                    if ((matrix[LetterI + 1][LetterJ].equals("O")) && matrix[LetterI + 2][LetterJ].equals("S")) {
+                        addPoint(SOS);
+                    }
+                }
+            }
+            //sKenar bitti
+            else {
+                if (LetterJ - 2 <= matrixN) {
+                    if ((matrix[LetterI][LetterJ - 1].equals("O")) && matrix[LetterI][LetterJ - 2].equals("S")) {
+                        addPoint(SOS);
+                    }
+                }
+                if (LetterJ + 2 <= matrixN) {
+                    if ((matrix[LetterI][LetterJ + 1].equals("O")) && matrix[LetterI][LetterJ + 2].equals("S")) {
+                        addPoint(SOS);
+                    }
+                }
+                if (LetterI - 2 <= matrixN) {
+                    if ((matrix[LetterI - 1][LetterJ].equals("O")) && matrix[LetterI - 2][LetterJ].equals("S")) {
+                        addPoint(SOS);
+                    }
+                }
+                if (LetterI + 2 <= matrixN) {
+                    if ((matrix[LetterI + 1][LetterJ].equals("O")) && matrix[LetterI + 2][LetterJ].equals("S")) {
+                        addPoint(SOS);
+                    }
+                }
+                if (LetterI - 2 <= matrixN && LetterJ - 2 <= matrixN) {
+                    if ((matrix[LetterI - 1][LetterJ - 1].equals("O")) && matrix[LetterI - 2][LetterJ - 2].equals("S")) {
+                        addPoint(SOS);
+                    }
+                }
+                if (LetterI + 2 <= matrixN && LetterJ + 2 <= matrixN) {
+                    if ((matrix[LetterI + 1][LetterJ + 1].equals("O")) && matrix[LetterI + 2][LetterJ + 2].equals("S")) {
+                        addPoint(SOS);
+                    }
+                }
+                if (LetterI - 2 <= matrixN && LetterJ + 2 <= matrixN) {
+                    if ((matrix[LetterI - 1][LetterJ + 1].equals("O")) && matrix[LetterI - 2][LetterJ + 2].equals("S")) {
+                        addPoint(SOS);
+                    }
+                }
+                if (LetterJ + 2 <= matrixN && LetterJ - 2 <= matrixN) {
+                    if ((matrix[LetterI + 1][LetterJ - 1].equals("O")) && matrix[LetterI + 2][LetterJ - 2].equals("S")) {
+                        addPoint(SOS);
+                    }
+                }
+            }
+
+        }
+    }
+
 
     public static void wholeGame(Game SOS) {
+
         int matrixN = SOS.getMatrixN();
-        for (int i = 0; i < matrixN * matrixN; i++) {
-            System.out.println("1");
-            getMatrixInput(SOS);
-            //checkTurnAndLetter();
-            //// sırayı sonrakine vermeyi unutma
-            //System.out.println("slm");
 
-            //     printPlayerPoints(SOS);
+        if (SOS.getPlayerTurn() == 1) {
             printMatrix(SOS);
+            System.out.println("Tüm oyun boyunca oynayacağınız harf:" + SOS.getLetter());
+        }
+        for (int i = 0; i < matrixN * matrixN; i++) {
 
+            getMatrixInput(SOS);
+
+            letterControl(SOS);
+
+
+            if (SOS.getPlayerTurn() == 1) {
+                SOS.setPlayerTurn(2);
+            } else {
+                SOS.setPlayerTurn(1);
+            }
+
+            if (SOS.getLetter().equals("O")) {
+                SOS.setLetter(5);
+            } else {
+                SOS.setLetter(6);
+            }
+
+            printMatrix(SOS);
+            printPlayerPoints(SOS);
+
+        }
+
+
+        if (SOS.getPlayerMePoint() < SOS.getPlayerPcPoint())
+            System.out.println("Bilgisayar kazandı!");
+        else if (SOS.getPlayerMePoint() > SOS.getPlayerPcPoint())
+            System.out.println("Siz kazandınız!");
+        else
+            System.out.println("Berabere!");
+    }
+
+    public static void addPoint(Game SOS) {
+        if (SOS.getPlayerTurn() == 1) {
+            SOS.setPlayerMePoint(SOS.getPlayerMePoint() + 1);
+        } else {
+            SOS.setPlayerPcPoint(SOS.getPlayerPcPoint() + 1);
         }
     }
 
-
     public static void printPlayerPoints(Game SOS) {
-        System.out.println("You:" + SOS.getPlayerMePoint());
-        System.out.println("PC:" + SOS.getPlayerPcPoint());
+        out.println("You:" + SOS.getPlayerMePoint());
+        out.println("PC:" + SOS.getPlayerPcPoint());
     }
 
     public static void getMatrixInput(Game SOS) {
         int matrixN = SOS.getMatrixN();
         int PlayerTurn = SOS.getPlayerTurn();
-        int PlayerLetter = SOS.getPlayerLetter();
-        int matrixColumn;
-        int matrixLine;
-        Scanner scanner = new Scanner(System.in);
+        String PlayerLetter = SOS.getLetter();
+        int LetterJ, LetterI;
 
+        Scanner scanner = new Scanner(System.in);
 
         if (PlayerTurn == 1) {
             do {
                 do {
-
-                    System.out.print("Hamlenizi girin(Yatay):");
-                    matrixColumn = scanner.nextInt();
-
-
-                } while (matrixColumn <= 0 || matrixColumn > matrixN);
+                    out.print("Hamlenizi girin(Yatay):");
+                    LetterJ = scanner.nextInt();
+                } while (LetterJ <= 0 || LetterJ > matrixN);
 
                 do {
-                    System.out.print("Hamlenizi girin(Düşey):");
-                    matrixLine = scanner.nextInt();
+                    out.print("Hamlenizi girin(Düşey):");
+                    LetterI = scanner.nextInt();
+                } while (LetterI <= 0 || LetterI > matrixN);
+            } while (checkMatrixIndex(LetterI, LetterJ, SOS));
 
-
-                } while (matrixLine <= 0 || matrixLine > matrixN);
-            } while (checkMatrixIndex(matrixLine, matrixColumn, SOS));
-            System.out.println(matrixColumn + "-" + matrixLine);
-            SOS.setMatrixColumn(matrixColumn);
-            SOS.setMatrixLine(matrixLine);
-            SOS.setMatrixRealIndex(matrixLine, matrixColumn, PlayerLetter);
+            SOS.setLetterJ(LetterJ);
+            SOS.setLetterI(LetterI);
+            SOS.setMatrixRealIndex(LetterI, LetterJ, PlayerLetter);
 
         } else if (PlayerTurn == 2) {
 
             do {
                 Random random = new Random();
-                matrixColumn = random.nextInt(matrixN) + 1;
-                matrixLine = random.nextInt(matrixN) + 1;
+                LetterJ = random.nextInt(matrixN) + 1;
+                LetterI = random.nextInt(matrixN) + 1;
 
-
-            } while (checkMatrixIndex(matrixLine, matrixColumn, SOS));
-            System.out.println(matrixColumn + "-" + matrixLine);
-            SOS.setMatrixColumn(matrixColumn);
-            SOS.setMatrixLine(matrixLine);
-            SOS.setMatrixRealIndex(matrixLine, matrixColumn, PlayerLetter);
+            } while (checkMatrixIndex(LetterI, LetterJ, SOS));
+            System.out.println("Bilgisayarın hamlesi: " + LetterI + "-" + LetterJ);
+            SOS.setLetterJ(LetterJ);
+            SOS.setLetterI(LetterI);
+            SOS.setMatrixRealIndex(LetterI, LetterJ, PlayerLetter);
         }
 
     }
 
-    public static boolean checkMatrixIndex(int matrixLine, int matrixColumn, Game SOS) {
-        if (SOS.getMatrixRealAtIndex(matrixLine, matrixColumn) == 0)
+    //0 sütun ve 0 satır olmadığını kontrol et
+    public static boolean checkMatrixIndex(int LetterI, int LetterJ, Game SOS) {
+        if (SOS.getMatrixRealAtIndex(LetterI, LetterJ).equals("."))
             return false;
         else
-
             return true;
     }
 
